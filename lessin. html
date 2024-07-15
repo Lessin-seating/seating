@@ -10,6 +10,11 @@
 <body>
     <div class="container">
 <form id="lessin-form">
-<a herf
+<a herf="create-hall-lessin.html">
 <button>יצירת אולם</button>
+</a>
 
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
