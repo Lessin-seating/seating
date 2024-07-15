@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>יצירת אולם</title>
     <link rel="stylesheet" href="styles.css">
-<a href="create-hall-lessin">יצירת אולם</a>
+    <a href="create-hall-lessin">יצירת אולם</a>
 </head>
 <body>
- <a herf="lessin.html">
- <button>בית ליסין</button>
- </a>
     <div class="container">
             <form id="hall-form">
             <label for="hall-name">שם האולם:</label>
@@ -39,7 +36,6 @@
                 <!-- Dynamic seats per row table will be generated here -->
             </div>
             
-            <button>סיום</button>
             <button id="saveButton">סיום</button> 
         </form>
     </div>
