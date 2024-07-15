@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>יצירת אולם</title>
+    <link rel="stylesheet" href="styles.css">
+<a href="create-hall-lessin">יצירת אולם</a>
+</head>
+<body>
+ <a herf="habima.html">
+ <button>הבימה</button>
+ </a>
+  <div class="container">
+            <form id="hall-form">
+            <label for="hall-name">שם האולם:</label>
+            <input type="text" id="hall-name" name="hallName" required>
+            
+            <label for="rows">כמה שורות יש באולם?</label>
+            <input type="number" id="rows" name="rows" required>
+            
+            <label for="seats-per-row">כמה כיסאות יש בשורה?</label>
+            <input type="number" id="seats-per-row" name="seatsPerRow" required>
+            
+            <label for="has-balcony">?האם יש יציע</label>
+            <input type="checkbox" id="has-balcony" name="hasBalcony">
+            
+            <div id="balcony-section" style="display: none;">
+                <label for="balconies">כמה יציעים יש?</label>
+                <input type="number" id="balconies" name="balconies">
+                
+                <div id="balcony-details"></div>
+            </div>
+            
+            <label for="different-seats-per-row">בכל שורה יש כמות שונה של כיסאות</label>
+            <input type="checkbox" id="different-seats-per-row" name="differentSeatsPerRow">
+            
+            <div id="seats-table" style="display: none;">
+                <!-- Dynamic seats per row table will be generated here -->
+            </div>
+            
+            <button>סיום</button>
+            <button id="saveButton">סיום</button> 
+        </form>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
