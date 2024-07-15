@@ -9,8 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>יצירת אולם</h1>
-        <form id="hall-form">
+            <form id="hall-form">
             <label for="hall-name">שם האולם:</label>
             <input type="text" id="hall-name" name="hallName" required>
             
@@ -37,7 +36,8 @@
                 <!-- Dynamic seats per row table will be generated here -->
             </div>
             
-            <button type="button" onclick="saveHall()">סיום</button>
+            <button>סיום</button>
+            <button id="saveButton">סיום</button> 
         </form>
     </div>
     <script src="scripts.js"></script>
