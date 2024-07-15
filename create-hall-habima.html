@@ -25,45 +25,16 @@
             <label for="has-balcony">?האם יש יציע</label>
             <input type="checkbox" id="has-balcony" name="hasBalcony">
             
-    <div id="balcony-section" style="display: none;">
-            <style>
-                   label {
-                display:block;
-                border:solid 2px green;
-                width: 200px;
-                 height:40px;
-                 margin-top:10px;
-                 color:green;
-                 text-align:center;
-                 line-height: 40px;
-              }
-     
-              <!-- hide input -->
-              input[type=checkbox] {
-                  display: none;
-              }
-     
-              <!-- Add ✓ on checked before label -->
-              input:checked + label:before {
-                  content: "✓ ";
-              }
-     
-             <!--Add styling on check -->
-             input:checked + label {
-                 border: solid 2px purple;
-                 color: purple;
-            }
-            </style>
-        </div>
-            
             <label for="different-seats-per-row">בכל שורה יש כמות שונה של כיסאות</label>
             <input type="checkbox" id="different-seats-per-row" name="differentSeatsPerRow">
             
             <div id="seats-table" style="display: none;">
                 <!-- Dynamic seats per row table will be generated here -->
             </div>
-            
-            <button id="saveButton">סיום</button> 
+        <form action="/action_page.php">
+          <input type="file" id="myFile" name="filename">
+          <input type="submit">
+          <button id="saveButton">סיום</button> 
         </form>
     </div>
     <script src="scripts.js"></script>
