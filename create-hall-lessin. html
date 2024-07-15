@@ -8,6 +8,9 @@
 <a href="create-hall-lessin">יצירת אולם</a>
 </head>
 <body>
+ <a herf="lessin.html">
+ <button>בית ליסין</button>
+ </a>
     <div class="container">
             <form id="hall-form">
             <label for="hall-name">שם האולם:</label>
