@@ -1,20 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('create-hall-btn')) {
-        loadHomePage();
-    }
-
-    if (document.getElementById('save-hall-btn')) {
         setupCreateHallPage();
     }
 
     if (document.getElementById('hall-title')) {
         setupHallPage();
     }
+
+    if (document.getElementById('halls-list')) {
+        setupTheaterPage();
+    }
 });
 
-function loadHomePage() {
-    let halls = JSON.parse(localStorage.getItem('halls')) || [];
-    let hallsList = document.getElementById('halls-list');
+function setupTheaterPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const theater = urlParams.get('theater');
+    const hallsList = document.getElementById('halls-list');
+
+    loadHalls(theater, hallsList);
+
+    document.getElementById('create-hall-btn').addEventListener('click', () => {
+        location.href = `create-hall.html?theater=${encodeURIComponent(theater)}`;
+    });
+}
+
+function loadHalls(theater, hallsList) {
+    let halls = JSON.parse(localStorage.getItem(theater)) || [];
 
     hallsList.innerHTML = ''; // Clear the list before populating
 
@@ -22,15 +33,19 @@ function loadHomePage() {
         let hallBtn = document.createElement('button');
         hallBtn.textContent = hall.name;
         hallBtn.addEventListener('click', () => {
-            location.href = `hall-template.html?name=${hall.name}`;
+            location.href = `hall-template.html?theater=${encodeURIComponent(theater)}&name=${encodeURIComponent(hall.name)}`;
         });
         hallsList.appendChild(hallBtn);
     });
 }
 
 function setupCreateHallPage() {
-    document.getElementById('has-stand').addEventListener('change', function () {
-        document.getElementById('stand-section').style.display = this.checked ? 'block' : 'none';
+    const urlParams = new URLSearchParams(window.location.search);
+    const theater = urlParams.get('theater');
+    document.getElementById('theater-name').value = theater;
+
+    document.getElementById('has-gallery').addEventListener('change', function () {
+        document.getElementById('gallery-section').style.display = this.checked ? 'block' : 'none';
     });
 
     document.getElementById('diff-seats-hall').addEventListener('change', function () {
@@ -40,8 +55,8 @@ function setupCreateHallPage() {
         }
     });
 
-    document.getElementById('num-stands').addEventListener('input', function () {
-        createStandSections(this.value);
+    document.getElementById('num-galleries').addEventListener('input', function () {
+        createGallerySections(this.value);
     });
 
     document.getElementById('save-hall-btn').addEventListener('click', () => {
@@ -51,7 +66,7 @@ function setupCreateHallPage() {
         const hallData = {
             name: hallName,
             rows: [],
-            stands: []
+            galleries: []
         };
 
         if (document.getElementById('diff-seats-hall').checked) {
@@ -66,34 +81,33 @@ function setupCreateHallPage() {
             }
         }
 
-        if (document.getElementById('has-stand').checked) {
-            const numStands = document.getElementById('num-stands').value;
-            for (let i = 1; i <= numStands; i++) {
-                const standName = document.getElementById(`stand-name-${i}`).value;
-                const standRows = document.getElementById(`num-rows-stand-${i}`).value;
-                const standSeatsPerRow = document.getElementById(`seats-per-row-stand-${i}`).value;
-                const stand = { name: standName, rows: [] };
+        if (document.getElementById('has-gallery').checked) {
+            const numGalleries = document.getElementById('num-galleries').value;
+            for (let i = 1; i <= numGalleries; i++) {
+                const galleryRows = document.getElementById(`num-rows-gallery-${i}`).value;
+                const gallerySeatsPerRow = document.getElementById(`seats-per-row-gallery-${i}`).value;
+                const gallery = { name: `Gallery ${i}`, rows: [] };
 
-                if (document.getElementById(`diff-seats-stand-${i}`).checked) {
-                    const standTable = document.querySelector(`#stand-seats-table-${i} table`);
-                    for (let j = 0; j < standTable.rows.length; j++) {
-                        const seats = standTable.rows[j].cells[1].querySelector('input').value;
-                        stand.rows.push({ seats });
+                if (document.getElementById(`diff-seats-gallery-${i}`).checked) {
+                    const galleryTable = document.querySelector(`#gallery-seats-table-${i} table`);
+                    for (let j = 0; j < galleryTable.rows.length; j++) {
+                        const seats = galleryTable.rows[j].cells[1].querySelector('input').value;
+                        gallery.rows.push({ seats });
                     }
                 } else {
-                    for (let j = 0; j < standRows; j++) {
-                        stand.rows.push({ seats: standSeatsPerRow });
+                    for (let j = 0; j < galleryRows; j++) {
+                        gallery.rows.push({ seats: gallerySeatsPerRow });
                     }
                 }
-                hallData.stands.push(stand);
+                hallData.galleries.push(gallery);
             }
         }
 
-        let halls = JSON.parse(localStorage.getItem('halls')) || [];
+        let halls = JSON.parse(localStorage.getItem(theater)) || [];
         halls.push(hallData);
-        localStorage.setItem('halls', JSON.stringify(halls));
+        localStorage.setItem(theater, JSON.stringify(halls));
 
-        location.href = 'index.html';
+        location.href = `${theater}.html`;
     });
 }
 
@@ -112,71 +126,63 @@ function createSeatsTable(section) {
     document.getElementById(`${section}-seats-table`).appendChild(table);
 }
 
-function createStandSections(numStands) {
-    const standsDetails = document.getElementById('stands-details');
-    standsDetails.innerHTML = '';
+function createGallerySections(numGalleries) {
+    const galleriesDetails = document.getElementById('galleries-details');
+    galleriesDetails.innerHTML = '';
 
-    for (let i = 1; i <= numStands; i++) {
-        const standDiv = document.createElement('div');
-        standDiv.classList.add('stand-section');
+    for (let i = 1; i <= numGalleries; i++) {
+        const galleryDiv = document.createElement('div');
+        galleryDiv.classList.add('gallery-section');
 
-        const standNameLabel = document.createElement('label');
-        standNameLabel.innerText = `Stand ${i} Name:`;
-        const standNameInput = document.createElement('input');
-        standNameInput.type = 'text';
-        standNameInput.id = `stand-name-${i}`;
-        
         const numRowsLabel = document.createElement('label');
-        numRowsLabel.innerText = `Number of Rows in Stand ${i}:`;
+        numRowsLabel.innerText = `Number of Rows in Gallery ${i}:`;
         const numRowsInput = document.createElement('input');
         numRowsInput.type = 'number';
-        numRowsInput.id = `num-rows-stand-${i}`;
+        numRowsInput.id = `num-rows-gallery-${i}`;
 
         const seatsPerRowLabel = document.createElement('label');
-        seatsPerRowLabel.innerText = `Number of Seats per Row in Stand ${i}:`;
+        seatsPerRowLabel.innerText = `Number of Seats per Row in Gallery ${i}:`;
         const seatsPerRowInput = document.createElement('input');
         seatsPerRowInput.type = 'number';
-        seatsPerRowInput.id = `seats-per-row-stand-${i}`;
+        seatsPerRowInput.id = `seats-per-row-gallery-${i}`;
 
         const diffSeatsCheckbox = document.createElement('input');
         diffSeatsCheckbox.type = 'checkbox';
-        diffSeatsCheckbox.id = `diff-seats-stand-${i}`;
+        diffSeatsCheckbox.id = `diff-seats-gallery-${i}`;
         const diffSeatsLabel = document.createElement('label');
         diffSeatsLabel.innerText = `Each row has a different number of seats`;
 
         const seatsTableDiv = document.createElement('div');
-        seatsTableDiv.id = `stand-seats-table-${i}`;
+        seatsTableDiv.id = `gallery-seats-table-${i}`;
         seatsTableDiv.style.display = 'none';
 
         diffSeatsCheckbox.addEventListener('change', function () {
             seatsTableDiv.style.display = this.checked ? 'block' : 'none';
             if (this.checked) {
-                createSeatsTableForStand(i, numRowsInput.value);
+                createSeatsTableForGallery(i, numRowsInput.value);
             }
         });
 
         numRowsInput.addEventListener('input', function () {
             if (diffSeatsCheckbox.checked) {
-                createSeatsTableForStand(i, this.value);
+                createSeatsTableForGallery(i, this.value);
             }
         });
 
-        standDiv.appendChild(standNameLabel);
-        standDiv.appendChild(standNameInput);
-        standDiv.appendChild(numRowsLabel);
-        standDiv.appendChild(numRowsInput);
-        standDiv.appendChild(seatsPerRowLabel);
-        standDiv.appendChild(seatsPerRowInput);
-        standDiv.appendChild(diffSeatsCheckbox);
-        standDiv.appendChild(diffSeatsLabel);
-        standDiv.appendChild(seatsTableDiv);
+        galleryDiv.appendChild(numRowsLabel);
+        galleryDiv.appendChild(numRowsInput);
+        galleryDiv.appendChild(seatsPerRowLabel);
+        galleryDiv.appendChild(seatsPerRowInput);
+        galleryDiv.appendChild(diffSeatsCheckbox);
+        galleryDiv.appendChild(diffSeatsLabel);
+        galleryDiv.appendChild(seatsTableDiv);
 
-        standsDetails.appendChild(standDiv);
+        galleriesDetails.appendChild(galleryDiv);
     }
 }
 
-function createSeatsTableForStand(standIndex, numRows) {
-    const seatsTableDiv = document.getElementById(`stand-seats-table-${standIndex}`);
+function createSeatsTableForGallery(galleryIndex, numRows) {
+    const seatsTableDiv = document.getElementById(`gallery-seats-table-${galleryIndex}`);
     seatsTableDiv.innerHTML = '';
 
     let table = document.createElement('table');
@@ -194,8 +200,10 @@ function createSeatsTableForStand(standIndex, numRows) {
 
 function setupHallPage() {
     const urlParams = new URLSearchParams(window.location.search);
+    const theater = urlParams.get('theater');
     const hallName = urlParams.get('name');
-    let hall = JSON.parse(localStorage.getItem('halls')).find(h => h.name === hallName);
+    let halls = JSON.parse(localStorage.getItem(theater));
+    let hall = halls.find(h => h.name === hallName);
 
     document.getElementById('hall-title').textContent = hall.name;
 
@@ -214,14 +222,14 @@ function setupHallPage() {
         hallGraphic.appendChild(rowDiv);
     });
 
-    if (hall.stands) {
-        hall.stands.forEach((stand, standIndex) => {
+    if (hall.galleries) {
+        hall.galleries.forEach(gallery => {
             let emptyLine = document.createElement('div');
             emptyLine.className = 'row';
             emptyLine.style.visibility = 'hidden';
             hallGraphic.appendChild(emptyLine);
 
-            stand.rows.forEach(row => {
+            gallery.rows.forEach(row => {
                 let rowDiv = document.createElement('div');
                 rowDiv.className = 'row';
                 for (let i = 0; i < row.seats; i++) {
