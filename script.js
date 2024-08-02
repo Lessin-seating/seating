@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.getElementById('save-hall-btn')) {
         setupCreateHallPage();
-        location.href='create-hall.html'
     }
 
     if (document.getElementById('hall-title')) {
@@ -16,8 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadHomePage() {
     let halls = JSON.parse(localStorage.getItem('halls')) || [];
     let hallsList = document.getElementById('halls-list');
-
-    hallsList.innerHTML = ''; // Clear the list before populating
 
     halls.forEach(hall => {
         let hallBtn = document.createElement('button');
@@ -49,63 +46,19 @@ function setupCreateHallPage() {
         const hallName = document.getElementById('hall-name').value;
         const numRows = document.getElementById('num-rows').value;
         const seatsPerRow = document.getElementById('seats-per-row').value;
-        const hallData = {
-            name: hallName,
-            rows: [],
-            stands: []
-        };
 
-        if (document.getElementById('diff-seats-hall').checked) {
-            const hallTable = document.querySelector('#hall-seats-table table');
-            for (let i = 0; i < hallTable.rows.length; i++) {
-                const seats = hallTable.rows[i].cells[1].querySelector('input').value;
-                hallData.rows.push({ seats });
-            }
-        } else {
-            for (let i = 0; i < numRows; i++) {
-                hallData.rows.push({ seats: seatsPerRow });
-            }
-        }
-
-        if (document.getElementById('has-stand').checked) {
-            const numStands = document.getElementById('num-stands').value;
-            for (let i = 1; i <= numStands; i++) {
-                const standName = document.getElementById(`stand-name-${i}`).value;
-                const standRows = document.getElementById(`num-rows-stand-${i}`).value;
-                const standSeatsPerRow = document.getElementById(`seats-per-row-stand-${i}`).value;
-                const stand = { name: standName, rows: [] };
-
-                if (document.getElementById(`diff-seats-stand-${i}`).checked) {
-                    const standTable = document.querySelector(`#stand-seats-table-${i} table`);
-                    for (let j = 0; j < standTable.rows.length; j++) {
-                        const seats = standTable.rows[j].cells[1].querySelector('input').value;
-                        stand.rows.push({ seats });
-                    }
-                } else {
-                    for (let j = 0; j < standRows; j++) {
-                        stand.rows.push({ seats: standSeatsPerRow });
-                    }
-                }
-                hallData.stands.push(stand);
-            }
-        }
-
-        let halls = JSON.parse(localStorage.getItem('halls')) || [];
-        halls.push(hallData);
-        localStorage.setItem('halls', JSON.stringify(halls));
-
-        location.href = 'index.html';
+        saveHall(hallName, numRows, seatsPerRow);
     });
 }
 
 function createSeatsTable(section) {
     let numRows = document.getElementById('num-rows').value;
     let table = document.createElement('table');
-    for (let i = 0; i < numRows; i++) {
+    for (let i = 1; i <= numRows; i++) {
         let row = table.insertRow();
         let cell1 = row.insertCell(0);
         let cell2 = row.insertCell(1);
-        cell1.innerHTML = `Row ${i + 1}`;
+        cell1.innerHTML = `Row ${i}`;
         let input = document.createElement('input');
         input.type = 'number';
         cell2.appendChild(input);
@@ -181,16 +134,57 @@ function createSeatsTableForStand(standIndex, numRows) {
     seatsTableDiv.innerHTML = '';
 
     let table = document.createElement('table');
-    for (let i = 0; i < numRows; i++) {
+    for (let i = 1; i <= numRows; i++) {
         let row = table.insertRow();
         let cell1 = row.insertCell(0);
         let cell2 = row.insertCell(1);
-        cell1.innerHTML = `Row ${i + 1}`;
+        cell1.innerHTML = `Row ${i}`;
         let input = document.createElement('input');
         input.type = 'number';
         cell2.appendChild(input);
     }
     seatsTableDiv.appendChild(table);
+}
+
+function saveHall(hallName, numRows, seatsPerRow) {
+    let hall = {
+        name: hallName,
+        rows: [],
+        stands: []
+    };
+
+    for (let i = 1; i <= numRows; i++) {
+        hall.rows.push({ seats: seatsPerRow });
+    }
+
+    if (document.getElementById('has-stand').checked) {
+        const numStands = document.getElementById('num-stands').value;
+        for (let i = 1; i <= numStands; i++) {
+            let standName = document.getElementById(`stand-name-${i}`).value;
+            let standRows = document.getElementById(`num-rows-stand-${i}`).value;
+            let standSeatsPerRow = document.getElementById(`seats-per-row-stand-${i}`).value;
+            let stand = { name: standName, rows: [] };
+
+            if (document.getElementById(`diff-seats-stand-${i}`).checked) {
+                let table = document.querySelector(`#stand-seats-table-${i} table`);
+                for (let j = 0; j < table.rows.length; j++) {
+                    let seats = table.rows[j].cells[1].querySelector('input').value;
+                    stand.rows.push({ seats });
+                }
+            } else {
+                for (let j = 1; j <= standRows; j++) {
+                    stand.rows.push({ seats: standSeatsPerRow });
+                }
+            }
+            hall.stands.push(stand);
+        }
+    }
+
+    let halls = JSON.parse(localStorage.getItem('halls')) || [];
+    halls.push(hall);
+    localStorage.setItem('halls', JSON.stringify(halls));
+
+    location.href = 'index.html';
 }
 
 function setupHallPage() {
@@ -201,7 +195,7 @@ function setupHallPage() {
     document.getElementById('hall-title').textContent = hall.name;
 
     let hallGraphic = document.getElementById('hall-graphic');
-    hall.rows.forEach(row => {
+    hall.rows.forEach((row, rowIndex) => {
         let rowDiv = document.createElement('div');
         rowDiv.className = 'row';
         for (let i = 0; i < row.seats; i++) {
