@@ -1,36 +1,17 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>איחור אופנתי</title>
+    <title>Later - Theater Seat Management</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>איחור אופנתי</h1>
-        <div class="theater-buttons">
-          <a href="habima.html">
-          	<button>הבימה</button>
-	  </a>
-        
-	  	<button>הקאמרי</button>
-        
-	  <a href="lessin.html">
-	  	<button>בית ליסין</button>
-	  </a>
-          
-		<button onclick="navigateToTheater('גשר')">גשר</button>
-            <button onclick="navigateToTheater('החאן')">החאן</button>
-            <button onclick="navigateToTheater('ארצי לילדים ונוער')">ארצי לילדים ונוער</button>
-            <button onclick="navigateToTheater('באר שבע')">באר שבע</button>
-            <button onclick="navigateToTheater('חיפה')">חיפה</button>
-            <button onclick="navigateToTheater('העברי')">העברי</button>
-            <button onclick="navigateToTheater('האינקובטור')">האינקובטור</button>
-        </div>
-        <button class="design-button" onclick="chooseDesign()">עיצוב כיסאות</button>
-        <p class="warning">נא לא ללחוץ על הכפתור</p>
+    <div id="home-page">
+        <button onclick="location.href='create-hall.html'">Create Hall</button>
+        <div id="halls-list"></div>
     </div>
-    <script src="scripts.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
