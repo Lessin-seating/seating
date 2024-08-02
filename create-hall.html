@@ -9,6 +9,8 @@
 <body>
     <div id="create-hall-page">
         <h1>Create Hall</h1>
+        <label for="theater-name">Theater:</label>
+        <input type="text" id="theater-name" disabled>
         <label for="hall-name">Hall Name:</label>
         <input type="text" id="hall-name">
         <label for="num-rows">Number of Rows in the Hall:</label>
@@ -17,15 +19,22 @@
         <input type="number" id="seats-per-row">
         <input type="checkbox" id="diff-seats-hall"> Each row has a different number of seats
         <div id="hall-seats-table" style="display:none;"></div>
-        <input type="checkbox" id="has-stand"> Is there a stand?
-        <div id="stand-section" style="display:none;">
-            <label for="num-stands">Number of Stands:</label>
-            <input type="number" id="num-stands">
-            <div id="stands-details"></div>
+        <input type="checkbox" id="has-gallery"> Is there a gallery?
+        <div id="gallery-section" style="display:none;">
+            <label for="num-galleries">Number of Galleries:</label>
+            <input type="number" id="num-galleries">
+            <div id="galleries-details"></div>
         </div>
         <button id="save-hall-btn">Save</button>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const theater = urlParams.get('theater');
+            document.getElementById('theater-name').value = theater;
+        });
+    </script>
 </body>
 </html>
