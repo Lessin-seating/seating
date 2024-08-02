@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>האינקובטור - Later</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button onclick="location.href='index.html'">Back to Theaters</button>
+    <h1>האינקובטור</h1>
+    <button id="create-hall-btn">Create Hall</button>
+    <div id="halls-list"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('create-hall-btn').addEventListener('click', () => {
+            location.href = `create-hall.html?theater=${encodeURIComponent('האינקובטור')}`;
+        });
+    </script>
+</body>
+</html>
