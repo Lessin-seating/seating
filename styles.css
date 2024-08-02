@@ -1,33 +1,20 @@
 body {
     font-family: Arial, sans-serif;
-    direction: rtl;
-    text-align: right;
-    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    background-color: #fff;
+#home-page, #create-hall-page, #hall-page {
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-top: 50px;
-    border-radius: 10px;
-}
-
-h1 {
-    color: #333;
 }
 
 button {
-    display: block;
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    background-color: #007bff;
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #007BFF;
     color: white;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -35,24 +22,71 @@ button:hover {
     background-color: #0056b3;
 }
 
-.design-button {
-    background-color: #28a745;
-}
-
-.warning {
-    color: red;
-    text-align: center;
-}
-
-label {
+input[type="number"], input[type="text"] {
     display: block;
-    margin-top: 10px;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    max-width: 400px;
 }
 
-input[type="text"], input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
+#stand-section, #hall-seats-table {
+    margin-top: 20px;
+}
+
+#hall-graphic {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.seat {
+    width: 60px;
+    height: 30px;
+    margin: 5px;
+    background-color: white;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    cursor: pointer;
+    list-style-type: none;
+}
+
+.seat.occupied {
+    background-color: red;
+}
+
+.seat.lighting-sound {
+    background-color: yellow;
+}
+
+.edit-row {
+    border: 1px dashed #333;
+    cursor: pointer;
+    position: relative;
+}
+
+.edit-row .arrow-left, .edit-row .arrow-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.edit-row .arrow-left {
+    left: -15px;
+}
+
+.edit-row .arrow-right {
+    right: -15px;
+}
+
+.edit-row .handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    background-color: #333;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }
