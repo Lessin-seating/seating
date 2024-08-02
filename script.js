@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.getElementById('save-hall-btn')) {
         setupCreateHallPage();
-        location.herf= 'index.html';
     }
 
     if (document.getElementById('hall-title')) {
