@@ -16,5 +16,128 @@
     <button id="edit-hall-btn">Edit</button>
 
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const theater = urlParams.get('theater');
+            const hallName = urlParams.get('name');
+            let halls = JSON.parse(localStorage.getItem(theater));
+            let hall = halls.find(h => h.name === hallName);
+
+            document.getElementById('hall-title').textContent = hall.name;
+
+            let hallGraphic = document.getElementById('hall-graphic');
+            hall.rows.forEach(row => {
+                let rowUl = document.createElement('ul');
+                rowUl.className = 'row';
+                for (let i = 0; i < row.seats; i++) {
+                    let seatLi = document.createElement('li');
+                    seatLi.className = 'seat';
+                    rowUl.appendChild(seatLi);
+                }
+                hallGraphic.appendChild(rowUl);
+            });
+
+            if (hall.galleries) {
+                hall.galleries.forEach(gallery => {
+                    let emptyLine = document.createElement('ul');
+                    emptyLine.className = 'row';
+                    emptyLine.style.visibility = 'hidden';
+                    hallGraphic.appendChild(emptyLine);
+
+                    gallery.rows.forEach(row => {
+                        let rowUl = document.createElement('ul');
+                        rowUl.className = 'row';
+                        for (let i = 0; i < row.seats; i++) {
+                            let seatLi = document.createElement('li');
+                            seatLi.className = 'seat';
+                            rowUl.appendChild(seatLi);
+                        }
+                        hallGraphic.appendChild(rowUl);
+                    });
+                });
+            }
+
+            document.getElementById('lighting-sound-btn').addEventListener('click', () => {
+                document.querySelectorAll('.seat').forEach(seat => {
+                    seat.addEventListener('click', () => {
+                        seat.classList.toggle('lighting-sound');
+                    });
+                });
+            });
+
+            document.getElementById('add-seats-btn').addEventListener('click', () => {
+                document.querySelectorAll('.seat').forEach(seat => {
+                    seat.addEventListener('click', () => {
+                        seat.classList.add('occupied');
+                    });
+                });
+            });
+
+            document.getElementById('remove-seats-btn').addEventListener('click', () => {
+                document.querySelectorAll('.seat.occupied').forEach(seat => {
+                    seat.addEventListener('click', () => {
+                        seat.classList.remove('occupied');
+                    });
+                });
+            });
+
+            document.getElementById('edit-hall-btn').addEventListener('click', () => {
+                enterEditMode(hallGraphic);
+            });
+        });
+
+        function enterEditMode(hallGraphic) {
+            document.querySelectorAll('.seat').forEach(seat => seat.removeEventListener('click', toggleOccupied));
+
+            document.querySelectorAll('.row').forEach(row => {
+                row.classList.add('edit-row');
+                let arrowLeft = document.createElement('div');
+                arrowLeft.className = 'arrow-left';
+                arrowLeft.innerHTML = '←';
+                arrowLeft.addEventListener('mousedown', (e) => dragRow(e, row, 'left'));
+
+                let arrowRight = document.createElement('div');
+                arrowRight.className = 'arrow-right';
+                arrowRight.innerHTML = '→';
+                arrowRight.addEventListener('mousedown', (e) => dragRow(e, row, 'right'));
+
+                let handle = document.createElement('div');
+                handle.className = 'handle';
+                handle.addEventListener('mousedown', (e) => dragCurve(e, row));
+
+                row.appendChild(arrowLeft);
+                row.appendChild(arrowRight);
+                row.appendChild(handle);
+            });
+
+            let saveBtn = document.createElement('button');
+            saveBtn.id = 'save-edit-btn';
+            saveBtn.textContent = 'Save';
+            saveBtn.addEventListener('click', () => saveEditMode(hallGraphic));
+            document.body.appendChild(saveBtn);
+        }
+
+        function saveEditMode(hallGraphic) {
+            document.querySelectorAll('.arrow-left, .arrow-right, .handle').forEach(elem => elem.remove());
+            document.querySelectorAll('.row').forEach(row => row.classList.remove('edit-row'));
+
+            document.getElementById('save-edit-btn').remove();
+
+            document.querySelectorAll('.seat').forEach(seat => seat.addEventListener('click', toggleOccupied));
+        }
+
+        function toggleOccupied() {
+            this.classList.toggle('occupied');
+        }
+
+        function dragRow(e, row, direction) {
+            // Implement row dragging logic
+        }
+
+        function dragCurve(e, row) {
+            // Implement row curving logic
+        }
+    </script>
 </body>
 </html>
