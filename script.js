@@ -30,13 +30,33 @@ function loadHalls(theater, hallsList) {
     hallsList.innerHTML = ''; // Clear the list before populating
 
     halls.forEach(hall => {
+        let hallDiv = document.createElement('div');
+        hallDiv.className = 'hall-item';
+
         let hallBtn = document.createElement('button');
         hallBtn.textContent = hall.name;
         hallBtn.addEventListener('click', () => {
             location.href = `hall-template.html?theater=${encodeURIComponent(theater)}&name=${encodeURIComponent(hall.name)}`;
         });
-        hallsList.appendChild(hallBtn);
+
+        let deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Eraser';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.addEventListener('click', () => {
+            deleteHall(theater, hall.name);
+        });
+
+        hallDiv.appendChild(hallBtn);
+        hallDiv.appendChild(deleteBtn);
+        hallsList.appendChild(hallDiv);
     });
+}
+
+function deleteHall(theater, hallName) {
+    let halls = JSON.parse(localStorage.getItem(theater)) || [];
+    halls = halls.filter(hall => hall.name !== hallName);
+    localStorage.setItem(theater, JSON.stringify(halls));
+    loadHalls(theater, document.getElementById('halls-list'));
 }
 
 function setupCreateHallPage() {
@@ -52,6 +72,8 @@ function setupCreateHallPage() {
         document.getElementById('hall-seats-table').style.display = this.checked ? 'block' : 'none';
         if (this.checked) {
             createSeatsTable('hall');
+        } else {
+            document.getElementById('hall-seats-table').innerHTML = '';
         }
     });
 
@@ -60,59 +82,12 @@ function setupCreateHallPage() {
     });
 
     document.getElementById('save-hall-btn').addEventListener('click', () => {
-        const hallName = document.getElementById('hall-name').value;
-        const numRows = document.getElementById('num-rows').value;
-        const seatsPerRow = document.getElementById('seats-per-row').value;
-        const hallData = {
-            name: hallName,
-            rows: [],
-            galleries: []
-        };
-
-        if (document.getElementById('diff-seats-hall').checked) {
-            const hallTable = document.querySelector('#hall-seats-table table');
-            for (let i = 0; i < hallTable.rows.length; i++) {
-                const seats = hallTable.rows[i].cells[1].querySelector('input').value;
-                hallData.rows.push({ seats });
-            }
-        } else {
-            for (let i = 0; i < numRows; i++) {
-                hallData.rows.push({ seats: seatsPerRow });
-            }
-        }
-
-        if (document.getElementById('has-gallery').checked) {
-            const numGalleries = document.getElementById('num-galleries').value;
-            for (let i = 1; i <= numGalleries; i++) {
-                const galleryRows = document.getElementById(`num-rows-gallery-${i}`).value;
-                const gallerySeatsPerRow = document.getElementById(`seats-per-row-gallery-${i}`).value;
-                const gallery = { name: `Gallery ${i}`, rows: [] };
-
-                if (document.getElementById(`diff-seats-gallery-${i}`).checked) {
-                    const galleryTable = document.querySelector(`#gallery-seats-table-${i} table`);
-                    for (let j = 0; j < galleryTable.rows.length; j++) {
-                        const seats = galleryTable.rows[j].cells[1].querySelector('input').value;
-                        gallery.rows.push({ seats });
-                    }
-                } else {
-                    for (let j = 0; j < galleryRows; j++) {
-                        gallery.rows.push({ seats: gallerySeatsPerRow });
-                    }
-                }
-                hallData.galleries.push(gallery);
-            }
-        }
-
-        let halls = JSON.parse(localStorage.getItem(theater)) || [];
-        halls.push(hallData);
-        localStorage.setItem(theater, JSON.stringify(halls));
-
-        location.href = `${theater}.html`;
+        saveHall(theater);
     });
 }
 
 function createSeatsTable(section) {
-    let numRows = document.getElementById('num-rows').value;
+    const numRows = document.getElementById('num-rows').value;
     let table = document.createElement('table');
     for (let i = 0; i < numRows; i++) {
         let row = table.insertRow();
@@ -160,6 +135,8 @@ function createGallerySections(numGalleries) {
             seatsTableDiv.style.display = this.checked ? 'block' : 'none';
             if (this.checked) {
                 createSeatsTableForGallery(i, numRowsInput.value);
+            } else {
+                seatsTableDiv.innerHTML = '';
             }
         });
 
@@ -198,6 +175,57 @@ function createSeatsTableForGallery(galleryIndex, numRows) {
     seatsTableDiv.appendChild(table);
 }
 
+function saveHall(theater) {
+    const hallName = document.getElementById('hall-name').value;
+    const numRows = document.getElementById('num-rows').value;
+    const seatsPerRow = document.getElementById('seats-per-row').value;
+    const hallData = {
+        name: hallName,
+        rows: [],
+        galleries: []
+    };
+
+    if (document.getElementById('diff-seats-hall').checked) {
+        const hallTable = document.querySelector('#hall-seats-table table');
+        for (let i = 0; i < hallTable.rows.length; i++) {
+            const seats = hallTable.rows[i].cells[1].querySelector('input').value;
+            hallData.rows.push({ seats });
+        }
+    } else {
+        for (let i = 0; i < numRows; i++) {
+            hallData.rows.push({ seats: seatsPerRow });
+        }
+    }
+
+    if (document.getElementById('has-gallery').checked) {
+        const numGalleries = document.getElementById('num-galleries').value;
+        for (let i = 1; i <= numGalleries; i++) {
+            const galleryRows = document.getElementById(`num-rows-gallery-${i}`).value;
+            const gallerySeatsPerRow = document.getElementById(`seats-per-row-gallery-${i}`).value;
+            const gallery = { name: `Gallery ${i}`, rows: [] };
+
+            if (document.getElementById(`diff-seats-gallery-${i}`).checked) {
+                const galleryTable = document.querySelector(`#gallery-seats-table-${i} table`);
+                for (let j = 0; j < galleryTable.rows.length; j++) {
+                    const seats = galleryTable.rows[j].cells[1].querySelector('input').value;
+                    gallery.rows.push({ seats });
+                }
+            } else {
+                for (let j = 0; j < galleryRows; j++) {
+                    gallery.rows.push({ seats: gallerySeatsPerRow });
+                }
+            }
+            hallData.galleries.push(gallery);
+        }
+    }
+
+    let halls = JSON.parse(localStorage.getItem(theater)) || [];
+    halls.push(hallData);
+    localStorage.setItem(theater, JSON.stringify(halls));
+
+    location.href = `${theater}.html`;
+}
+
 function setupHallPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const theater = urlParams.get('theater');
@@ -209,38 +237,32 @@ function setupHallPage() {
 
     let hallGraphic = document.getElementById('hall-graphic');
     hall.rows.forEach(row => {
-        let rowDiv = document.createElement('div');
-        rowDiv.className = 'row';
+        let rowUl = document.createElement('ul');
+        rowUl.className = 'row';
         for (let i = 0; i < row.seats; i++) {
-            let seat = document.createElement('li');
-            seat.className = 'seat';
-            seat.addEventListener('click', () => {
-                seat.classList.toggle('occupied');
-            });
-            rowDiv.appendChild(seat);
+            let seatLi = document.createElement('li');
+            seatLi.className = 'seat';
+            rowUl.appendChild(seatLi);
         }
-        hallGraphic.appendChild(rowDiv);
+        hallGraphic.appendChild(rowUl);
     });
 
     if (hall.galleries) {
         hall.galleries.forEach(gallery => {
-            let emptyLine = document.createElement('div');
+            let emptyLine = document.createElement('ul');
             emptyLine.className = 'row';
             emptyLine.style.visibility = 'hidden';
             hallGraphic.appendChild(emptyLine);
 
             gallery.rows.forEach(row => {
-                let rowDiv = document.createElement('div');
-                rowDiv.className = 'row';
+                let rowUl = document.createElement('ul');
+                rowUl.className = 'row';
                 for (let i = 0; i < row.seats; i++) {
-                    let seat = document.createElement('li');
-                    seat.className = 'seat';
-                    seat.addEventListener('click', () => {
-                        seat.classList.toggle('occupied');
-                    });
-                    rowDiv.appendChild(seat);
+                    let seatLi = document.createElement('li');
+                    seatLi.className = 'seat';
+                    rowUl.appendChild(seatLi);
                 }
-                hallGraphic.appendChild(rowDiv);
+                hallGraphic.appendChild(rowUl);
             });
         });
     }
