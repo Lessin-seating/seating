@@ -10,11 +10,11 @@
     <button onclick="location.href='index.html'">Back to Theaters</button>
     <h1>הבימה</h1>
     <button id="create-hall-btn">Create Hall</button>
-    <div id="halls-list"></div>
+    <div id="halls-list" class="halls-list"></div>
 
     <script src="script.js"></script>
     <script>
-         document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const theater = 'הבימה';
             document.getElementById('create-hall-btn').addEventListener('click', () => {
                 location.href = `create-hall.html?theater=${encodeURIComponent(theater)}`;
@@ -27,14 +27,36 @@
             let halls = JSON.parse(localStorage.getItem(theater)) || [];
             let hallsList = document.getElementById('halls-list');
 
+            hallsList.innerHTML = ''; // Clear the list before populating
+
             halls.forEach(hall => {
+                let hallDiv = document.createElement('div');
+                hallDiv.className = 'hall-item';
+
                 let hallBtn = document.createElement('button');
                 hallBtn.textContent = hall.name;
                 hallBtn.addEventListener('click', () => {
                     location.href = `hall.html?theater=${encodeURIComponent(theater)}&name=${encodeURIComponent(hall.name)}`;
                 });
-                hallsList.appendChild(hallBtn);
+
+                let deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Eraser';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.addEventListener('click', () => {
+                    deleteHall(theater, hall.name);
+                });
+
+                hallDiv.appendChild(hallBtn);
+                hallDiv.appendChild(deleteBtn);
+                hallsList.appendChild(hallDiv);
             });
+        }
+
+        function deleteHall(theater, hallName) {
+            let halls = JSON.parse(localStorage.getItem(theater)) || [];
+            halls = halls.filter(hall => hall.name !== hallName);
+            localStorage.setItem(theater, JSON.stringify(halls));
+            loadHalls(theater);
         }
     </script>
 </body>
